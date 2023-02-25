@@ -1,0 +1,33 @@
+{
+    "env": {
+      "browser": true,
+      "node": true
+    },
+    "extends": [
+      "eslint:recommended"
+    ],
+    "parserOptions" : {
+      "ecmaVersion": 2021,
+      "requireConfigFile": false,
+      "sourceType": "module"
+    },
+    "rules": {
+        "quotes": ["error", "single", { "avoidEscape": true }],
+        "no-unused-vars": ["warn", { "args": "after-used" }],
+        "comma-dangle": ["error", "always-multiline"],
+        "indent": ["warn", "tab"],
+        "semi": ["error", "always"],
+        "space-before-blocks": "error",
+        "space-before-function-paren": "error",
+        "object-curly-spacing": ["error", "always",
+          {
+            "arraysInObjects": false,
+            "objectsInObjects": false
+          }],
+          "object-curly-newline": ["error", {
+            "minProperties": 4,
+            "multiline": true
+            }],
+          "no-trailing-spaces": "error"
+    }
+  }
