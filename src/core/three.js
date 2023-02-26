@@ -14,6 +14,8 @@ import {
 	DirectionalLight,
 	DirectionalLightHelper,
 	CameraHelper,
+	SpotLight,
+	SpotLightHelper,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { createBox } from '@components';
@@ -68,6 +70,9 @@ const options = {
 	sphereColor: sphere.material.color.getStyle(),
 	wireframe: false,
 	speed: 0.01,
+	angle: 0.2,
+	penumbra: 0,
+	intensity: 1,
 };
 
 // Изменение цвета сферы
@@ -87,6 +92,11 @@ gui
 // Регулирование скорости сферы
 gui.add(options, 'speed', 0, 0.1);
 
+// Регулирование источника света
+gui.add(options, 'angle', 0, 1);
+gui.add(options, 'penumbra', 0, 1);
+gui.add(options, 'intensity', 0, 1);
+
 // Создание плоскости
 const planeGeometry = new PlaneGeometry(30, 30);
 const planeMaterial = new MeshStandardMaterial({
@@ -99,14 +109,28 @@ plane.receiveShadow = true;
 scene.add(plane);
 
 // Создание света
-const ambientLight = new AmbientLight(0x333333);
-scene.add(ambientLight);
+// const ambientLight = new AmbientLight(0x333333);
+// scene.add(ambientLight);
 
-const directionLight = new DirectionalLight(0xffffff, 0.8);
-directionLight.position.set(-30, 50, 0);
-directionLight.castShadow = true;
-directionLight.shadow.camera.bottom = -12;
-scene.add(directionLight);
+// const directionLight = new DirectionalLight(0xffffff, 0.8);
+// directionLight.position.set(-30, 50, 0);
+// directionLight.castShadow = true;
+// directionLight.shadow.camera.bottom = -12;
+// scene.add(directionLight);
+
+const spotLight = new SpotLight(0xFFFFFF);
+spotLight.position.set(-100, 100, 0);
+spotLight.castShadow = true;
+spotLight.angle = 0.2;
+scene.add(spotLight);
+
+// Обновление данных света
+const spotLoghtSettings = ({ angle, penumbra, intensity }) => {
+	spotLight.angle = angle;
+	spotLight.penumbra = penumbra;
+	spotLight.intensity = intensity;
+	sLightHelper.update();
+};
 
 
 // Помошники
@@ -116,17 +140,21 @@ scene.add(axesHelper);
 const gridHelper = new GridHelper(30);
 scene.add(gridHelper);
 
-const dLightHelper = new DirectionalLightHelper(directionLight, 5);
-scene.add(dLightHelper);
+// const dLightHelper = new DirectionalLightHelper(directionLight, 5);
+// scene.add(dLightHelper);
 
-const dLightShadowHelper = new CameraHelper(directionLight.shadow.camera);
-scene.add(dLightShadowHelper);
+// const dLightShadowHelper = new CameraHelper(directionLight.shadow.camera);
+// scene.add(dLightShadowHelper);
+
+const sLightHelper = new SpotLightHelper(spotLight);
+scene.add(sLightHelper);
 
 // Обновление картинки
 const animate = () => {
 	requestAnimationFrame(animate);
 	box.rotate(0.01);
 	sphereMove(options.speed);
+	spotLoghtSettings(options);
 
 	renderer.render(scene, camera);
 };
