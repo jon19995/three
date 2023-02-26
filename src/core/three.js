@@ -16,18 +16,39 @@ import {
 	CameraHelper,
 	SpotLight,
 	SpotLightHelper,
+	TextureLoader,
+	BoxGeometry,
+	CubeTextureLoader,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { createBox } from '@components';
 import { GUI } from 'dat.gui';
+import { nebula, stars } from '@img';
 
 const renderer = new WebGLRenderer();
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+// Включить тени
 renderer.shadowMap.enabled = true;
+// Цвет фона
+// renderer.setClearColor(0xFFEA00);
 
 const scene = new Scene();
+
+// Создание фона сцены
+const textureLoader = new TextureLoader();
+// scene.background = textureLoader.load(stars);
+
+const cubeTextureLoader = new CubeTextureLoader();
+scene.background = cubeTextureLoader.load([
+	stars,
+	stars,
+	stars,
+	stars,
+	stars,
+	stars,
+]);
 
 //Создание камеры
 const camera = new PerspectiveCamera(
@@ -45,6 +66,24 @@ orbit.update();
 // Создание куба
 const box = createBox();
 scene.add(box);
+
+// Создание куба №2
+const box2Geometry = new BoxGeometry(4, 4, 4);
+const box2Material = new MeshBasicMaterial({
+	// color: 0x00FF00,
+	map: textureLoader.load(nebula),
+});
+const box2MultiMaterial = [
+	new MeshBasicMaterial({ map: textureLoader.load(nebula) }),
+	new MeshBasicMaterial({ map: textureLoader.load(stars) }),
+	new MeshBasicMaterial({ map: textureLoader.load(stars) }),
+	new MeshBasicMaterial({ map: textureLoader.load(nebula) }),
+	new MeshBasicMaterial({ map: textureLoader.load(stars) }),
+	new MeshBasicMaterial({ map: textureLoader.load(nebula) }),
+];
+const box2 = new Mesh(box2Geometry, box2MultiMaterial);
+box2.position.set(0, 15, 10);
+scene.add(box2);
 
 // Создание Сферы
 const sphereGeometry = new SphereGeometry(4, 30, 30);
@@ -131,7 +170,6 @@ const spotLoghtSettings = ({ angle, penumbra, intensity }) => {
 	spotLight.intensity = intensity;
 	sLightHelper.update();
 };
-
 
 // Помошники
 const axesHelper = new AxesHelper(5);
