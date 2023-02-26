@@ -19,6 +19,8 @@ import {
 	TextureLoader,
 	BoxGeometry,
 	CubeTextureLoader,
+	Vector2,
+	Raycaster,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { createBox } from '@components';
@@ -83,6 +85,7 @@ const box2MultiMaterial = [
 ];
 const box2 = new Mesh(box2Geometry, box2MultiMaterial);
 box2.position.set(0, 15, 10);
+box2.name = 'box2';
 scene.add(box2);
 
 // Создание Сферы
@@ -94,6 +97,7 @@ const sphereMaterial = new MeshStandardMaterial({
 const sphere = new Mesh(sphereGeometry, sphereMaterial);
 sphere.position.set(-10, 10, 0);
 sphere.castShadow = true;
+const sphereId = sphere.id;
 scene.add(sphere);
 
 // параметры для анимации сферы
@@ -187,12 +191,39 @@ scene.add(gridHelper);
 const sLightHelper = new SpotLightHelper(spotLight);
 scene.add(sLightHelper);
 
+// Отслеживание элемента, на который навидена мышь
+const mousePosition = new Vector2();
+window.addEventListener('mousemove', (e) => {
+	mousePosition.x = (e.clientX / window.innerWidth) * 2 - 1;
+	mousePosition.y = 1 - (e.clientY / window.innerHeight) * 2;
+});
+const rayCaster = new Raycaster();
+
+// Действия при наведении мыши
+const onMoseover = () => {
+	rayCaster.setFromCamera(mousePosition, camera);
+	const intersects = rayCaster.intersectObjects(scene.children);
+
+	// Изменение цвета объекта при наведении
+	intersects.forEach((intersect) => {
+		if (intersect.object.id === sphereId) {
+			intersect.object.material.color.set('red');
+		}
+
+		if (intersect.object.name === 'box2') {
+			intersect.object.rotation.z += 0.01;
+			intersect.object.rotation.x += 0.01;
+		}
+	});
+};
+
 // Обновление картинки
 const animate = () => {
 	requestAnimationFrame(animate);
 	box.rotate(0.01);
 	sphereMove(options.speed);
 	spotLoghtSettings(options);
+	onMoseover();
 
 	renderer.render(scene, camera);
 };
