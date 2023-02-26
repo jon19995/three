@@ -23,6 +23,7 @@ import {
 	Raycaster,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { createBox } from '@components';
 import { GUI } from 'dat.gui';
 import { nebula, stars } from '@img';
@@ -64,6 +65,21 @@ camera.position.set(-10, 30, 30);
 // Возможность управления камеры мышью
 const orbit = new OrbitControls(camera, renderer.domElement);
 orbit.update();
+
+// Добавление модели обезьяны
+const mokyeUrl = new URL('@models/monkey.glb', import.meta.url);
+const assetsLoader = new GLTFLoader();
+assetsLoader.load(
+	mokyeUrl.href,
+	(gltf) => {
+		const model = gltf.scene;
+		model.position.set(-12, 4, 10);
+		scene.add(model);
+	},
+	undefined,
+	(error) => {
+		console.log(error);
+	});
 
 // Создание куба
 const box = createBox();
