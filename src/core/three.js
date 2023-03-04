@@ -227,8 +227,8 @@ const onMoseover = () => {
 		}
 
 		if (intersect.object.name === 'box2') {
-			intersect.object.rotation.z += 0.01;
-			intersect.object.rotation.x += 0.01;
+			intersect.object.rotation.z += 0.05;
+			intersect.object.rotation.x += 0.05;
 		}
 	});
 };
@@ -245,3 +245,9 @@ const animate = () => {
 };
 
 animate();
+
+window.addEventListener('resize', () => {
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize(window.innerWidth, window.innerHeight);
+});
